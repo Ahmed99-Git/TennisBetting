@@ -68,7 +68,7 @@ async function clickTennisMenu(page) {
       
       // Click the Tennis menu with a delay to simulate human behavior
       await tennisMenuElement.click({ delay: 100 });
-      console.log('Clicked the Tennis menu');
+      // console.log('Clicked the Tennis menu');
       
       // Wait for the submenu to open
       await page.waitForTimeout(500);
@@ -79,7 +79,7 @@ async function clickTennisMenu(page) {
     
     // Step 2: Wait for the submenu to open and click the <a> tag with href="/paris-sportifs/sports/5"
     const linkSelector = 'a[href="/paris-sportifs/sports/5"]';
-    console.log('Waiting for the submenu link to be available...');
+    // console.log('Waiting for the submenu link to be available...');
     await page.waitForSelector(linkSelector, { timeout: 10000 });
     
     // Click the specific <a> tag with human-like behavior (delay and move)
@@ -91,7 +91,7 @@ async function clickTennisMenu(page) {
       
       // Click with a delay to simulate human behavior
       await linkElement.click({ delay: 100 });
-      console.log('Clicked the submenu link with href="/paris-sportifs/sports/5"');
+      // console.log('Clicked the submenu link with href="/paris-sportifs/sports/5"');
     } else {
       console.log('Could not find the <a> tag with href="/paris-sportifs/sports/5"');
     }
@@ -103,14 +103,14 @@ async function clickTennisMenu(page) {
 async function navigateToWinamax(page) {
   let url = process.env.URL1;
   url = url.trim().replace(/^['"]|['"]$/g, '');
-  console.log(`Navigating to ${url}...`);
+  // console.log(`Navigating to ${url}...`);
   
   try {
     await page.goto(url, {
       waitUntil: 'networkidle2', // Wait until network is idle
       timeout: 60000
     });
-    console.log('Page loaded successfully');
+    // console.log('Page loaded successfully');
 
     const closed = await closeAlertModal(page);
     if (!closed) {
@@ -119,7 +119,7 @@ async function navigateToWinamax(page) {
     
     // Setup WebSocket monitoring
     await serviceWebSocket.setupWebSocketMonitoring(page);
-    console.log('WebSocket monitoring enabled');
+    // console.log('WebSocket monitoring enabled');
 
     await page.waitForTimeout(500);
     await clickTennisMenu(page);

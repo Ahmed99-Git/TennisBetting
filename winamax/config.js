@@ -1,6 +1,6 @@
 export const config = {
     browserHeader: {
-            headless: false, // Set to true for production (runs without GUI)
+            headless: true, // Set to true for production (runs without GUI)
             defaultViewport: {
               width: 1920,
               height: 1080
