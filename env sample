@@ -1,2 +1,4 @@
-URL1 = 'https://www.winamax.fr/paris-sportifs/sports/5/'
-URL2 = "https://www.pinnacle.bet/fr/tennis/matchups/"
+URL1 = 'https://www.winamax.fr/paris-sportifs/sports/1/'
+URL2 = "https://guest.api.arcadia.pinnacle.com/0.1/sports/33/matchups?withSpecials=false&brandId=0"
+
+WINAMAX_FETCH_PERIOD =  60
