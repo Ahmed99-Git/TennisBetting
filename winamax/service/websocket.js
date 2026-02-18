@@ -1,10 +1,8 @@
-import { generateUUID } from '../utils/common.js';
-import { writeFile, readFile } from 'fs/promises';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+// import { generateUUID } from '../utils/common.js';
+const { writeFile, readFile } = require('fs/promises');
+const { join, dirname } = require('path');
+const { fileURLToPath } = require('url');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const outJsonPath = join(__dirname, '..', 'out.json');
 
 const tennisInfo = {};
@@ -172,7 +170,8 @@ async function setupWebSocketMonitoring(page) {
     return client;
 }
 
-export {
+module.exports = {
   setupWebSocketMonitoring,
+  tennisInfo ,
 };
   
