@@ -5,10 +5,13 @@
     "cheerio": "^1.2.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "puppeteer": "^21.0.0"
+    "puppeteer": "^21.0.0",
+    "socket.io-client": "^4.8.3",
+    "uuid": "^13.0.0",
+    "ws": "^8.19.0",
+    "yeast": "^0.1.2"
   },
   "scripts": {
     "start": "node index.js"
   }
-
 }
