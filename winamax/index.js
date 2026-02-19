@@ -1,8 +1,9 @@
-const { config } = require('./config');
+const { config } = require('./config.js');
 const puppeteer = require('puppeteer');
-const serviceWebSocket = require('./service/websocket');
 const dotenv = require('dotenv');
 const path = require('path');
+const serviceWebSocket = require('./service/websocket.js');
+
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 async function initBrowser() {
@@ -100,7 +101,7 @@ async function clickTennisMenu(page) {
   }
 }
 
-async function navigateToWinamax(page) {
+async function navigateToWinamax(page, ws) {
   let url = process.env.URL1;
   url = url.trim().replace(/^['"]|['"]$/g, '');
   // console.log(`Navigating to ${url}...`);
@@ -118,7 +119,8 @@ async function navigateToWinamax(page) {
     }
     
     // Setup WebSocket monitoring
-    await serviceWebSocket.setupWebSocketMonitoring(page);
+    if(ws == null)
+      ws = await serviceWebSocket.setupWebSocketMonitoring(page);
     // console.log('WebSocket monitoring enabled');
 
     await page.waitForTimeout(500);
@@ -131,34 +133,34 @@ async function navigateToWinamax(page) {
   }
 }
 
-async function runScraper() {
-  let browser;
-  let page;
-  try {
-    const browserSetup = await initBrowser();
-    browser = browserSetup.browser;
-    page = browserSetup.page;
+async function runScraper(index, browser, page, ws) {
 
-    // Navigate to Winamax
-    const navigated = await navigateToWinamax(page);
-    if (!navigated) {
-      throw new Error('Failed to navigate to Winamax');
+  if(index == 0) {
+    try {
+      if(browser == null || page == null) {
+        const browserSetup = await initBrowser();
+        browser = browserSetup.browser;
+        page = browserSetup.page;
+        const navigated = await navigateToWinamax(page, ws);
+        if (!navigated) {
+          throw new Error('Failed to navigate to Winamax');
+        }
+      }
+      console.log("tennisInfo =", serviceWebSocket.tennisInfo);
+    } catch (error) {
+      console.error('Error in scraper:', error);
+    } finally {
     }
-    
-        
-  } catch (error) {
-    console.error('Error in scraper:', error);
-  } finally {
   }
+  return {winamaxInfo: serviceWebSocket?.tennisInfo, browser, page, ws : serviceWebSocket};
 }
 
 // Run the scraper if this file is executed directly
-if (require.main === module) {
-  runScraper().catch(console.error);
-}
+// if (require.main === module) {
+//   runScraper().catch(console.error);
+// }
 
 module.exports = {
   initBrowser,
-  navigateToWinamax,
   runScraper
 };
