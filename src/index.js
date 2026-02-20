@@ -12,24 +12,6 @@ async function main() {
     let savedWs = null;
     const fetchInterval =  parseInt(process.env.FETCH_ONCE_TIME);
 
-    // Create new match
-    // const match = new Betting({
-    //   match_id: 12345,
-    //   home_team: "Djokovic",
-    //   away_team: "Alcaraz",
-    //   status: "scheduled",
-    //   start_time: new Date().toISOString()
-    // });
-
-    // match.save();
-
-    // // Read
-    // const data = Betting.findByMatchId(12345);
-    // console.log(data);
-
-    // // Update
-    // Betting.updateStatus(12345, "live");
-
     while (true) {
       try {
         const ws = await winamaxScraper.run(savedWs, count); 

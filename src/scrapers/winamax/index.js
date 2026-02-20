@@ -6,7 +6,6 @@ const {createSocket} = require ('../../services/ws.js');
 const { v4 } = require("uuid");
 async function getStandardTennisInfo(ws) {
   const requestId = v4();
-  ws.requestId = requestId;
   const response = await safeSendReceive(ws, makeSendMsgContent("sport:5", requestId), requestId);
   return response?.payload;
 }
@@ -48,10 +47,10 @@ async function run (ws, count) {
 
   const standardTennisInfo = await getStandardTennisInfo(ws);
   ws.standardInfo = standardTennisInfo;
-  if(count % FULL_FETCH_INTERVAL_TIMES == 0) {
+  // if(count % FULL_FETCH_INTERVAL_TIMES == 0) {
     const fullMatchInfo = await getFullMatchInfo(ws);
     ws.fullMatchInfo = fullMatchInfo;
-  }
+  // }
   const sortedData = await winamaxParser.resortAllData({standardInfo: ws.standardInfo, fullMatchInfo: ws.fullMatchInfo});
   return ws;
 }

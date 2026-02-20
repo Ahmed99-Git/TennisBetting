@@ -1,4 +1,13 @@
 const WebSocket = require("ws");
+const { getDataFromReceive } = require("../utils/common.js");
+
+async function receiveMessage(data, ws) {
+  const msg = getDataFromReceive(data.toString());
+  if (!msg) return;
+  // if(ws.status == FULL_FETCH_STATUS) {
+   
+  // }
+}
 
 function createSocket(data) {
   const url = `wss://sports-eu-west-3.winamax.fr/uof-sports-server/socket.io/?language=FR&version=3.38.0&embed=false&EIO=3&transport=websocket&sid=${data.sid}`
@@ -22,6 +31,7 @@ function createSocket(data) {
   });
 
   websocket.on("message", (data) => {
+    receiveMessage(data, websocket);
     console.log("📩 Message:", data.toString().length);
   });
 

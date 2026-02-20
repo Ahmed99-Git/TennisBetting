@@ -150,7 +150,7 @@ async function resortAllData(data) {
         matchInfo.set1GameCount = getSet1GameCount(matchSummarize, fullMatch);
         sortedData[matchId] = matchInfo;
 
-        if(matchInfo.matchWinner && matchInfo.matchWinner.length > 0 && matchInfo.matchWinner[0] <= 1.4){
+        if(matchInfo.matchWinner && matchInfo.matchWinner.length > 0 ){
             try {
                 Betting.save(matchInfo);
             } catch (error) {

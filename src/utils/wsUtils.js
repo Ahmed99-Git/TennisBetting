@@ -3,6 +3,12 @@ const { getDataFromReceive } = require("./common.js");
 async function safeSendReceive(ws, data, requestId) {
     const timeout = ws.timeout;
   
+    if (requestId)
+        ws.requestId = requestId;
+    else{
+        ws.wait_match_id = data.matchId;
+    }
+
     return new Promise((resolve, reject) => {
       if (ws.readyState === WebSocket.CLOSING || ws.readyState === WebSocket.CLOSED) {
         return reject(new Error("WebSocket is not open"));
