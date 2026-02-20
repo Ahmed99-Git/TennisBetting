@@ -9,10 +9,10 @@ async function main() {
     let savedWs = null;
     while (true) {
       try {
-        const ws = await run(savedWs); 
+        const ws = await run(savedWs, count); 
         savedWs = ws;
 
-        const pinnacleInfo = await pinnacleScraper.runScraper();
+        // const pinnacleInfo = await pinnacleScraper.runScraper();
         // if(winamaxInfo?.originData == null) continue;
         // const sortedData = await winamaxParser.resortAllData(winamaxInfo.originData);
         count++;

@@ -18,28 +18,52 @@ function createSocket(data) {
   websocket.on("open", () => {
     console.log("✅ Connected");
     websocket.send("2probe");
+    console.log("2probe");
   });
 
   websocket.on("message", (data) => {
-    console.log("📩 Message:", data.toString());
+    console.log("📩 Message:", data.toString().length);
   });
+
+  let pingInterval = null;
 
   websocket.on("message", (data) => {
     const msg = data.toString();
-    if(msg == "3probe") return websocket;
+    if(msg == "3probe") {
+      if (websocket.readyState === WebSocket.OPEN) {
+      websocket.send("5");
+      console.log("5");
+      websocket.status = "connected";
+      }
+      
+      // Start sending ping "2" every 25 seconds
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
+      pingInterval = setInterval(() => {
+        if (websocket.readyState === WebSocket.OPEN) {
+          websocket.send("2");
+          console.log("Ping: 2");
+        }
+      }, 25000);
+    }
 
     if (msg === "2") {
       websocket.send("3"); // pong
     }
 
-    if (msg.startsWith("0")) {
-      websocket.send("40"); // open socket.io connection
-    }
+    // if (msg.startsWith("0")) {
+    //   websocket.send("40"); // open socket.io connection
+    // }
   });
-  
 
   websocket.on("close", (code, reason) => {
     console.log("❌ Closed:", code, reason.toString());
+    // Clear ping interval on close
+    if (pingInterval) {
+      clearInterval(pingInterval);
+      pingInterval = null;
+    }
   });
 
   websocket.on("error", (err) => {

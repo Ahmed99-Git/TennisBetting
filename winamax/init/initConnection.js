@@ -1,7 +1,8 @@
 const axios = require('axios');
 const yeast = require('yeast');
 const { v4 } = require("uuid");
-const { getTHeader, getSIDHeader } = require('./config.js');
+const { getTHeader, getSIDHeader } = require('../config.js');
+const {getCookieValue} = require('../utils/common.js');
 
 async function initializeWebSocket() {
     const t = yeast();
@@ -36,40 +37,36 @@ async function sendWithSID(data){
     const url = `https://sports-eu-west-3.winamax.fr/uof-sports-server/socket.io/?language=FR&version=3.37.0&embed=false&EIO=3&transport=polling&t=${t}&sid=${data.sid}`;
     getSIDHeader.headers.Cookie = `AWSALB=${data.AWSALB}; AWSALBCORS=${data.AWSALBCORS}`;
     const response = await axios.get(url,  { headers: getSIDHeader.headers });
-    console.log(response.data);
-    return response.data;
-  }
-  async function isAvailableUse(data){
-    const t = yeast();
-    const requestId = v4();
-    console.log(requestId);
-    const payload = `42${JSON.stringify([
-      "m",
-      {
-        route: "sport:5",
-        requestId,
-      }
-    ])}`;
-    const body = `${payload.length}:${payload}`;
-    const url = `https://sports-eu-west-3.winamax.fr/uof-sports-server/socket.io/?language=FR&version=3.37.0&embed=false&EIO=3&transport=polling&t=${t}&sid=${data.sid}`;
-    getSIDHeader.headers.Cookie = `AWSALB=${data.AWSALB}; AWSALBCORS=${data.AWSALBCORS}`;
-  
-  const response = await axios.post(
-    url,
-    body,
+    return response?.data;
+}
+async function isAvailableUse(data){
+const t = yeast();
+const requestId = v4();
+console.log(requestId);
+const payload = `42${JSON.stringify([
+    "m",
     {
-      headers:  getSIDHeader.headers
+    route: "sport:5",
+    requestId,
     }
-  );
-    console.log(response.data);
-    return response.data;
-  }
+])}`;
+const body = `${payload.length}:${payload}`;
+const url = `https://sports-eu-west-3.winamax.fr/uof-sports-server/socket.io/?language=FR&version=3.37.0&embed=false&EIO=3&transport=polling&t=${t}&sid=${data.sid}`;
+getSIDHeader.headers.Cookie = `AWSALB=${data.AWSALB}; AWSALBCORS=${data.AWSALBCORS}`;
+
+const response = await axios.post(
+url,
+body,
+{
+    headers:  getSIDHeader.headers
+}
+);
+return response?.data;
+}
 
 async function initSocketInfo() {
     const receivedSID = await initializeWebSocket();
     const cookies = receivedSID.headers["set-cookie"];
-    console.log(cookies);
-    // Extract values
     const AWSALB = getCookieValue(cookies[0], 'AWSALB');
     const AWSALBCORS = getCookieValue(cookies[1], 'AWSALBCORS');
     
@@ -86,7 +83,7 @@ async function initSocketInfo() {
 
     const initTennisInfo = await  sendWithSID({sid, AWSALB, AWSALBCORS});
 
-    return {sid, AWSALB, AWSALBCORS};
+    return {sid, AWSALB, AWSALBCORS, pingInterval, pingTimeout,maxPayload};
 }
 module.exports = {
     initSocketInfo,
