@@ -1,15 +1,13 @@
-const winamaxScraper = require('./winamax/index.js');
-const pinnacleScraper = require('./pinnacle/index.js');
-const winamaxParser = require('./analyze/winamaxParser.js');
-const { run } = require('./winamax/index.js');
-
+const winamaxScraper = require('./scrapers/winamax/index.js');
+const pinnacleScraper = require('./scrapers/pinnacle/index.js');
+const winamaxParser = require('./dataParsers/winamaxParser.js');
 
 async function main() {
     let count = 0;
     let savedWs = null;
     while (true) {
       try {
-        const ws = await run(savedWs, count); 
+        const ws = await winamaxScraper.run(savedWs, count); 
         savedWs = ws;
 
         // const pinnacleInfo = await pinnacleScraper.runScraper();

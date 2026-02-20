@@ -1,7 +1,7 @@
-const winamaxParser = require('../analyze/winamaxParser.js');
+const winamaxParser = require('../../dataParsers/winamaxParser.js');
 const {initSocketInfo} = require ("./init/initConnection.js");
-const {makeSendMsgContent, safeSend} = require ("./utils/common.js");
-const {createSocket} = require ('./service/ws.js');
+const {makeSendMsgContent, safeSend} = require ("../../utils/common.js");
+const {createSocket} = require ('../../services/ws.js');
 const { v4 } = require("uuid");
 async function getStandardTennisInfo(ws) {
   const requestId = v4();

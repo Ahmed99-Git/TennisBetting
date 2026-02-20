@@ -1,8 +1,8 @@
 const axios = require('axios');
 const yeast = require('yeast');
 const { v4 } = require("uuid");
-const { getTHeader, getSIDHeader } = require('../config.js');
-const {getCookieValue} = require('../utils/common.js');
+const { getTHeader, getSIDHeader } = require('../../../config/winamaxConfig.js');
+const {getCookieValue} = require('../../../utils/common.js');
 
 async function initializeWebSocket() {
     const t = yeast();
