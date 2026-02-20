@@ -10,7 +10,15 @@ function getCookieValue(cookieString, name) {
   const match = cookieString.match(new RegExp(`${name}=([^;]+)`));
   return match ? match[1] : null;
 }
+function makeSendMsgContent (route, requestId) {
+  const payload = [];
+  payload.push("m");
+  payload.push({route: route, requestId: requestId});
+  return `42${JSON.stringify(payload)}`;
+}
+
 module.exports = {
     generateUUID,
     getCookieValue,
+    makeSendMsgContent,
 };

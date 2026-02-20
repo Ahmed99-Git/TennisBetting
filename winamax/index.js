@@ -1,70 +1,38 @@
-const axios = require('axios');
-const yeast = require('yeast');
-const { v4 } = require("uuid");
+const {initSocketInfo} = require ("./init/initConnection.js");
+const {makeSendMsgContent} = require ("./utils/common.js");
 
-const { getTHeader, getSIDHeader } = require('./config.js');
-
-async function getSID() {
-  const t = yeast();
-  const originUrl = `https://sports-eu-west-3.winamax.fr/uof-sports-server/socket.io/`;
-    const query = new URLSearchParams({
-    language: "FR",
-    version: "3.38.0",
-    embed: "false",
-    EIO: "3",
-    transport: "polling",
-    t, // short for t: t
-  });
-  const url  = `${originUrl}?${query.toString()}`;
-  try {
-    const response = await axios.get(url, {
-      headers: getTHeader.headers,
-      timeout: 15000, // 15s - fail fast instead of hanging
-    });
-    console.log(response.data);
-    return response;
-  } catch (err) {
-    if (err.code === 'ETIMEDOUT' || err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
-      console.error('Network error: cannot reach Winamax. Check firewall, VPN, and that https://www.winamax.fr works in your browser.');
-    }
-    throw err;
-  }
-}
-async function sendWithSID(data){
-  const t = yeast();
-  
-  const url = `https://sports-eu-west-3.winamax.fr/uof-sports-server/socket.io/?language=FR&version=3.37.0&embed=false&EIO=3&transport=polling&t=${t}&sid=${data.sid}`;
-  getSIDHeader.headers.Cookie = `AWSALB=${data.AWSALB}; AWSALBCORS=${data.AWSALBCORS}`;
-  const response = await axios.get(url,  { headers: getSIDHeader.headers });
-  console.log(response.data);
-  return response.data;
-}
-async function firstPostShake(data){
-  const t = yeast();
+async function getStandardTennisInfo(ws) {
   const requestId = v4();
-  console.log(requestId);
-  const payload = `42${JSON.stringify([
-    "m",
-    {
-      route: "sport:5",
-      requestId,
-    }
-  ])}`;
-  const body = `${payload.length}:${payload}`;
-  const url = `https://sports-eu-west-3.winamax.fr/uof-sports-server/socket.io/?language=FR&version=3.37.0&embed=false&EIO=3&transport=polling&t=${t}&sid=${data.sid}`;
-  getSIDHeader.headers.Cookie = `AWSALB=${data.AWSALB}; AWSALBCORS=${data.AWSALBCORS}`;
-
-const response = await axios.post(
-  url,
-  body,
-  {
-    headers:  getSIDHeader.headers
-  }
-);
-  console.log(response.data);
-  return response.data;
+  ws.requestId = requestId;
+  const response = await ws.send(makeSendMsgContent("sport:5", requestId));
+  return JSON.parse(response);
 }
-module.exports = { getSID, 
-  sendWithSID,
-  firstPostShake
- };
+async function getFullMatchInfo(ws) {
+  const matchsArray = ws.standardInfo.data.matchs;
+  for(const match of matchsArray) {
+    const requestId = v4();
+    ws.requestId = requestId;
+    const response = await ws.send(makeSendMsgContent("sport:5", requestId));
+    return JSON.parse(response);
+  }
+  return null;
+}
+
+async function run (ws, count) {
+  const data = await initSocketInfo();
+  if(data == null)
+    return null;
+  const {sid, AWSALB, AWSALBCORS} = data;
+  if(ws == null) {
+    ws = await createSocket({sid, AWSALB, AWSALBCORS});
+  }
+  const standardTennisInfo = await getStandardTennisInfo(ws);
+  ws.standardInfo = standardTennisInfo;
+  if(count % 6 == 0) {
+    const fullMatchInfo = await getFullMatchInfo(ws);
+    ws.fullMatchInfo = fullMatchInfo;
+  }
+ return ws;
+}
+
+module.exports = { run };

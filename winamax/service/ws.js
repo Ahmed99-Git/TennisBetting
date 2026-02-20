@@ -24,6 +24,20 @@ function createSocket(data) {
     console.log("📩 Message:", data.toString());
   });
 
+  websocket.on("message", (data) => {
+    const msg = data.toString();
+    if(msg == "3probe") return websocket;
+
+    if (msg === "2") {
+      websocket.send("3"); // pong
+    }
+
+    if (msg.startsWith("0")) {
+      websocket.send("40"); // open socket.io connection
+    }
+  });
+  
+
   websocket.on("close", (code, reason) => {
     console.log("❌ Closed:", code, reason.toString());
   });
