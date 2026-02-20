@@ -1,12 +1,15 @@
+const Betting = require('../models/winamax/Betting.js');
+
 function getMatchWinner(matchSource, fullMatch) {
     const matchWinnerOdds =[];
+    if(matchSource == null || matchSource.bets == null) return null;
     const betId = matchSource.bets[0];
-    if(betId == null) return null;
+    if (betId == null) return null;
     
     const bet = fullMatch?.bets?.[betId];
-    if(bet == null) return null;
-    try{
-        if(bet.specialBetValue  && bet.specialBetValue == "type=prematch")
+    if (bet == null) return null;
+    try {
+        if (bet.specialBetValue  && bet.specialBetValue == "type=prematch")
         {
             const outcomeIds = bet.outcomes;
             matchWinnerOdds.push(fullMatch.odds[outcomeIds[0]]);
@@ -65,7 +68,7 @@ function getSet1Winner(matchSource, fullMatch) {
     return set1WinnerOdds;
 }
 function getHandicapInfo(matchSource, fullMatch) {
-    const handicapInfo =[];
+    const handicapInfo = {};
     const setnrBets = Object.values(fullMatch?.bets).filter(bet => bet.specialBetValue && bet.specialBetValue.startsWith("setnr=") );
     try{
         for(const bet of setnrBets){
@@ -83,7 +86,7 @@ function getHandicapInfo(matchSource, fullMatch) {
     return handicapInfo;
 }
 function getTotalBigRounds(matchSource, fullMatch) {
-    const bigRoundInfo =[];
+    const bigRoundInfo = {};
     const setnrBets = Object.values(fullMatch?.bets).filter(bet => bet.specialBetValue && bet.specialBetValue.startsWith("total=") );
     try{
         for(const bet of setnrBets){
@@ -101,7 +104,7 @@ function getTotalBigRounds(matchSource, fullMatch) {
     return bigRoundInfo;
 }
 function getSet1GameCount(matchSource, fullMatch) {
-    const set1GameCountInfo =[];
+    const set1GameCountInfo = {};
     const setnrBets = Object.values(fullMatch?.bets).filter(bet => bet.specialBetValue && bet.specialBetValue.startsWith("setnr=1|total=") );
     try{
         for(const bet of setnrBets){
@@ -121,6 +124,7 @@ function getSet1GameCount(matchSource, fullMatch) {
 async function resortAllData(data) {   
     const sortedData = {};
     const {standardInfo, fullMatchInfo} = data;
+    if(fullMatchInfo == undefined || fullMatchInfo == null) return sortedData;
     for(const  fullMatch of fullMatchInfo) {
         const matchId = Object.keys(fullMatch.matches)[0];
         if(matchId == null) continue;
@@ -145,10 +149,17 @@ async function resortAllData(data) {
         matchInfo.totalBigRounds = getTotalBigRounds(matchSummarize, fullMatch);
         matchInfo.set1GameCount = getSet1GameCount(matchSummarize, fullMatch);
         sortedData[matchId] = matchInfo;
+
+        if(matchInfo.matchWinner && matchInfo.matchWinner.length > 0 && matchInfo.matchWinner[0] <= 1.4){
+            try {
+                Betting.save(matchInfo);
+            } catch (error) {
+            console.error(`Error saving match ${matchId} to database:`, error);
+        }}
     }
     return sortedData;
 }
 
 module.exports = {
-    resortAllData,
+    resortAllData
 };

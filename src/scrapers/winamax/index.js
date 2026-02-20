@@ -1,19 +1,20 @@
 const winamaxParser = require('../../dataParsers/winamaxParser.js');
 const {initSocketInfo} = require ("./init/initConnection.js");
-const {makeSendMsgContent, safeSend} = require ("../../utils/common.js");
+const {makeSendMsgContent} = require ("../../utils/common.js");
+const {safeSendReceive} = require ("../../utils/wsUtils.js");
 const {createSocket} = require ('../../services/ws.js');
 const { v4 } = require("uuid");
 async function getStandardTennisInfo(ws) {
   const requestId = v4();
   ws.requestId = requestId;
-  const response = await safeSend(ws, makeSendMsgContent("sport:5", requestId), requestId);
+  const response = await safeSendReceive(ws, makeSendMsgContent("sport:5", requestId), requestId);
   return response?.payload;
 }
 async function getFullMatchInfo(ws) {
   const fullMatchInfo = [];
   const matchsArray = ws.standardInfo?.matches || [];
   for(const key of Object.keys(matchsArray)) {
-    const response = await safeSend(ws, makeSendMsgContent(`match:${key}`, null), null);
+    const response = await safeSendReceive(ws, makeSendMsgContent(`match:${key}`, null), null);
     fullMatchInfo.push(response?.payload);
   }
   return fullMatchInfo;
@@ -30,6 +31,7 @@ function waitForConnection(ws) {
   });
 }
 async function run (ws, count) {
+  const FULL_FETCH_INTERVAL_TIMES = parseInt(process.env.WINAMAX_FULL_FETCH_PERIOD / process.env.FETCH_ONCE_TIME) || 6 ;
   if(count == null) count = 1;
   if(ws == null) {
     const data = await initSocketInfo();
@@ -43,9 +45,10 @@ async function run (ws, count) {
     ws.sid = sid;
   }
   await waitForConnection(ws);
+
   const standardTennisInfo = await getStandardTennisInfo(ws);
   ws.standardInfo = standardTennisInfo;
-  if(count % 6 == 0) {
+  if(count % FULL_FETCH_INTERVAL_TIMES == 0) {
     const fullMatchInfo = await getFullMatchInfo(ws);
     ws.fullMatchInfo = fullMatchInfo;
   }

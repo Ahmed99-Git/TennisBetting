@@ -47,14 +47,9 @@ function createSocket(data) {
         }
       }, 25000);
     }
-
     if (msg === "2") {
       websocket.send("3"); // pong
     }
-
-    // if (msg.startsWith("0")) {
-    //   websocket.send("40"); // open socket.io connection
-    // }
   });
 
   websocket.on("close", (code, reason) => {
