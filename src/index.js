@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 
 const winamaxScraper = require('./scrapers/winamax/index.js');
 const pinnacleScraper = require('./scrapers/pinnacle/index.js');
-const Betting = require('./models/winamax/Betting.js');
+const Betting = require('./models/Betting.js');
 
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
@@ -14,14 +14,11 @@ async function main() {
 
     while (true) {
       try {
-        // const ws = await winamaxScraper.run(savedWs, count); 
-        // savedWs = ws;
-
+        const ws = await winamaxScraper.run(savedWs, count); 
+        savedWs = ws;
         const pinnacleInfo = await pinnacleScraper.run();
-        // if(winamaxInfo?.originData == null) continue;
-        // const sortedData = await winamaxParser.resortAllData(winamaxInfo.originData);
-        count++;
 
+        count++;
       } catch (e) {
         console.error(e);
       }

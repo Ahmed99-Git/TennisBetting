@@ -1,3 +1,8 @@
+function americanOddsToDecimal(odds) {
+  return odds > 0
+    ? (odds / 100) + 1
+    : (100 / Math.abs(odds)) + 1;
+}
 function getCookieValue(cookieString, name) {
   const match = cookieString.match(new RegExp(`${name}=([^;]+)`));
   return match ? match[1] : null;
@@ -28,9 +33,9 @@ function makeSendMsgContent (route, requestId) {
   return `42${JSON.stringify(payload)}`;
 }
 
-
 module.exports = {
   getCookieValue,
   getDataFromReceive,
   makeSendMsgContent,
+  americanOddsToDecimal,
 };

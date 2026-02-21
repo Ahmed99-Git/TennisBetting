@@ -1,15 +1,16 @@
-const dotenv = require('dotenv');
 const path = require('path');
+const dotenv = require('dotenv');
+const { getTennisInfoByAxios } = require('../../services/api.js');
+const { resortAllData } = require('../../dataParsers/pinnacleParser.js');
+const { matchUrlInfo, marketUrlInfo } = require('../../config/pinnacleConfig.js');
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
-const { matchUrlInfo, marketUrlInfo } = require('../../config/pinnacleConfig.js');
-
-const { getTennisInfoByAxios } = require('../../services/api.js');
-
 async function run() {
-    const matchInfo = await getTennisInfoByAxios(matchUrlInfo);
-    const marketInfo = await getTennisInfoByAxios(marketUrlInfo);
-    return { matchInfo, marketInfo };
+    const matchInfos = await getTennisInfoByAxios(matchUrlInfo);
+    const marketInfos = await getTennisInfoByAxios(marketUrlInfo);
+
+    const sortedData = await resortAllData({ matchInfos, marketInfos });
+    return  sortedData ;
 }
 // Run the scraper if this file is executed directly
 if (require.main === module) {

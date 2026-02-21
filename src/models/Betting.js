@@ -1,8 +1,9 @@
-const db = require('../../database/db.js');
+const db = require('../database/db.js');
 
 class Betting {
   constructor({
     match_id,
+    bookmaker,
     home_team,
     away_team,
     status,
@@ -14,6 +15,7 @@ class Betting {
     set1_game_count = {}
   }) {
     this.match_id = match_id;
+    this.bookmaker = bookmaker;
     this.home_team = home_team;
     this.away_team = away_team;
     this.status = status;
@@ -38,6 +40,7 @@ class Betting {
     const stmt = db.prepare(`
       INSERT INTO matches (
         match_id,
+        bookmaker,
         home_team,
         away_team,
         status,
@@ -47,11 +50,12 @@ class Betting {
         handicap,
         total_rounds,
         set1_game_count
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     return stmt.run(
       this.match_id ?? null,
+      this.bookmaker ?? null,
       this.home_team ?? null,
       this.away_team ?? null,
       this.status ?? null,
@@ -71,6 +75,7 @@ class Betting {
     const stmt = db.prepare(`
       INSERT INTO matches (
         match_id,
+        bookmaker,
         home_team,
         away_team,
         status,
@@ -81,7 +86,7 @@ class Betting {
         total_rounds,
         set1_game_count
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(match_id)
       DO UPDATE SET
         home_team = excluded.home_team,
@@ -98,6 +103,7 @@ class Betting {
 
     return stmt.run(
       this.match_id,
+      this.bookmaker,
       this.home_team,
       this.away_team,
       this.status,
@@ -169,6 +175,7 @@ class Betting {
     const stmt = db.prepare(`
       INSERT INTO matches (
         match_id,
+        bookmaker,
         home_team,
         away_team,
         status,
@@ -179,9 +186,10 @@ class Betting {
         total_rounds,
         set1_game_count
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(match_id)
       DO UPDATE SET
+        bookmaker = excluded.bookmaker,
         home_team = excluded.home_team,
         away_team = excluded.away_team,
         status = excluded.status,
@@ -195,13 +203,14 @@ class Betting {
     `);
   
     return stmt.run(
-      matchInfo.matchId,
+      matchInfo.id,
+      matchInfo.bookmaker,
       matchInfo.competitor1Name,
       matchInfo.competitor2Name,
       matchInfo.status,
-      matchInfo.matchStart instanceof Date
-        ? matchInfo.matchStart.toISOString()
-        : matchInfo.matchStart,
+      matchInfo.startTime instanceof Date
+        ? matchInfo.startTime.toISOString()
+        : matchInfo.startTime,
       JSON.stringify(matchInfo.matchWinner ?? {}),
       JSON.stringify(matchInfo.set1Winner ?? {}),
       JSON.stringify(matchInfo.handicapInfo ?? {}),

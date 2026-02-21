@@ -24,14 +24,7 @@ const websocketOptions = {
         "Accept-Language": "en-US,en;q=0.9,fr;q=0.8",
         "Origin": "https://www.winamax.fr",
         "Host": "sports-eu-west-3.winamax.fr",
-
         "Accept-Encoding": "gzip, deflate, br, zstd",
-        // "Connection": "Upgrade",
-        // "Sec-WebSocket-Version": "13",
-        // "Sec-WebSocket-Key": "6d91TNKG06Ukokb0aCgAeQ==",
-        // "Upgrade": "websocket",
-        // "Pragma": "no-cache",
-        // "Cache-Control": "no-cache",
     }
 };
 
@@ -71,7 +64,7 @@ const getSIDHeader = {
 }
 module.exports = {
   chromeOptions,
-    websocketOptions,
-    getTHeader,
-    getSIDHeader,
+  websocketOptions,
+  getTHeader,
+  getSIDHeader,
 };

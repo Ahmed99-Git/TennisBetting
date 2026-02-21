@@ -1,4 +1,4 @@
-const Betting = require('../models/winamax/Betting.js');
+const Betting = require('../models/Betting.js');
 
 function getMatchWinner(matchSource, fullMatch) {
     const matchWinnerOdds =[];
@@ -132,10 +132,10 @@ async function resortAllData(data) {
         const matchInfo = {};
         const matchSummarize = fullMatch.matches[matchId];
         if(matchSummarize == null) continue;
-
-        matchInfo.matchId = matchId;
+        matchInfo.id = matchId;
         matchInfo.title = matchSummarize.title;
-        matchInfo.matchStart = matchSummarize.matchStart;
+        matchInfo.bookmaker = "winamax";
+        matchInfo.startTime = new Date(matchSummarize.matchStart * 1000).toISOString().replace('00.000Z', '00Z');
         matchInfo.status = matchSummarize.status;
 
         matchInfo.competitor1Name = matchSummarize.competitor1Name;

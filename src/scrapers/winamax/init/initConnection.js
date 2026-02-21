@@ -42,7 +42,7 @@ async function sendWithSID(data){
 async function isAvailableUse(data){
 const t = yeast();
 const requestId = v4();
-console.log(requestId);
+// console.log(requestId);
 const payload = `42${JSON.stringify([
     "m",
     {
