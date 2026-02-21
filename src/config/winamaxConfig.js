@@ -26,12 +26,12 @@ const websocketOptions = {
         "Host": "sports-eu-west-3.winamax.fr",
 
         "Accept-Encoding": "gzip, deflate, br, zstd",
-        "Connection": "Upgrade",
-        "Sec-WebSocket-Version": "13",
-        "Sec-WebSocket-Key": "6d91TNKG06Ukokb0aCgAeQ==",
-        "Upgrade": "websocket",
-        "Pragma": "no-cache",
-        "Cache-Control": "no-cache",
+        // "Connection": "Upgrade",
+        // "Sec-WebSocket-Version": "13",
+        // "Sec-WebSocket-Key": "6d91TNKG06Ukokb0aCgAeQ==",
+        // "Upgrade": "websocket",
+        // "Pragma": "no-cache",
+        // "Cache-Control": "no-cache",
     }
 };
 
@@ -49,7 +49,6 @@ const getTHeader = {
     "Sec-Fetch-Site": "same-site",
     "Sec-Fetch-Dest": "empty",
     "Sec-Ch-Ua-Mobile": "?0",
-    // "Cookie":"PHPSESSIONID=019c767f-0a0c-766d-883b-2ebbdf4c0b53",
     "Sec-Ch-Ua-Platform": "Windows"
   }
 }
@@ -66,7 +65,6 @@ const getSIDHeader = {
     "Sec-Fetch-Site": "same-site",
     "Sec-Fetch-Dest": "empty",
     "Sec-Ch-Ua-Mobile": "?0",
-    // "Cookie":"PHPSESSIONID=019c767f-0a0c-766d-883b-2ebbdf4c0b53",
     "Sec-Ch-Ua-Platform": "Windows",
     "sec-ch-ua":'"Not:A-Brand";v="99", "Google Chrome";v="120", "Chromium";v="120"'
   }

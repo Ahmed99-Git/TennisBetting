@@ -1,22 +1,9 @@
 const axios = require('axios');
 
-async function getTennisInfoByAxios(pinnacleUrl) {
+async function getTennisInfoByAxios(urlInfo) {
 
-    const response = await axios.get(pinnacleUrl)
-  .then(function (response) {
-    try {
-        const tableInfo = response.data;
-        return tableInfo;
-      } catch (e) {
-        console.log('Cannot get the Pinnacle Tennis Info:', e);
-      }
-      return null;
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-  })
-  return response;
+    const response = await axios.get(urlInfo.url, { params: urlInfo.params, headers: urlInfo.headers })
+    return response.data;
 }
 
 module.exports = {

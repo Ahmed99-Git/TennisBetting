@@ -2,18 +2,19 @@ const dotenv = require('dotenv');
 const path = require('path');
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
-const pinnacleUrl = process.env.URL2;
+const { matchUrlInfo, marketUrlInfo } = require('../../config/pinnacleConfig.js');
 
 const { getTennisInfoByAxios } = require('../../services/api.js');
 
-async function runScraper() {
-    const tableInfo = await getTennisInfoByAxios(pinnacleUrl);
-    return tableInfo;
+async function run() {
+    const matchInfo = await getTennisInfoByAxios(matchUrlInfo);
+    const marketInfo = await getTennisInfoByAxios(marketUrlInfo);
+    return { matchInfo, marketInfo };
 }
 // Run the scraper if this file is executed directly
 if (require.main === module) {
-    runScraper().catch(console.error);
+    run().catch(console.error);
 }
 module.exports = {
-    runScraper
+    run
 }

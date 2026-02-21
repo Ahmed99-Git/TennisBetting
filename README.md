@@ -152,7 +152,7 @@ dashboards).
 
 ### Prerequisites
 
-- **Node.js** >= 18
+- **Node.js** latest version
 - **npm** (bundled with Node)
 
 > Puppeteer is listed as a dependency and will download a compatible Chromium
