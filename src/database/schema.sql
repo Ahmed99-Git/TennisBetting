@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS matches (
     bookmaker TEXT NOT NULL,
     home_team TEXT NOT NULL,
     away_team TEXT NOT NULL,
+    bet TEXT NOT NULL,
     status TEXT NOT NULL,
     start_time DATETIME NOT NULL,
     odds TEXT NOT NULL,

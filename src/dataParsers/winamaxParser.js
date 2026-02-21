@@ -35,6 +35,8 @@ function getMatchWinner(matchSource, fullMatch) {
     return matchWinnerOdds;
 }
 function getSet1Winner(matchSource, fullMatch) {
+    if(matchSource == null || matchSource.bets == null) return null;
+    if(matchSource.bets.length < 2) return null;
     const set1WinnerOdds =[];
     const betId = matchSource.bets[1];
     if(betId == null) return null;
@@ -86,6 +88,7 @@ function getHandicapInfo(matchSource, fullMatch) {
     return handicapInfo;
 }
 function getTotalBigRounds(matchSource, fullMatch) {
+    /////////**********get total big set count only : betType = 3755, other betType = 2958, 2842, 3307, 5682 */
     const bigRoundInfo = {};
     const setnrBets = Object.values(fullMatch?.bets).filter(bet => bet.specialBetValue && bet.specialBetValue.startsWith("total=") );
     try{

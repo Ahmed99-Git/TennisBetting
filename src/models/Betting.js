@@ -6,6 +6,7 @@ class Betting {
     bookmaker,
     home_team,
     away_team,
+    bet,
     status,
     start_time,
     odds = [],
@@ -18,6 +19,7 @@ class Betting {
     this.bookmaker = bookmaker;
     this.home_team = home_team;
     this.away_team = away_team;
+    this.bet = bet;
     this.status = status;
 
     // Convert Date → ISO string automatically
@@ -45,6 +47,7 @@ class Betting {
         away_team,
         status,
         start_time,
+        bet,
         odds,
         set1_odds,
         handicap,
@@ -60,6 +63,7 @@ class Betting {
       this.away_team ?? null,
       this.status ?? null,
       this.start_time ?? null,
+      this.bet ?? null,
       JSON.stringify(this.odds ?? []),
       JSON.stringify(this.set1_odds ?? []),
       JSON.stringify(this.handicap ?? {}),
@@ -78,6 +82,7 @@ class Betting {
         bookmaker,
         home_team,
         away_team,
+        bet,
         status,
         start_time,
         odds,
@@ -86,11 +91,12 @@ class Betting {
         total_rounds,
         set1_game_count
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(match_id)
       DO UPDATE SET
         home_team = excluded.home_team,
         away_team = excluded.away_team,
+        bet = excluded.bet,
         status = excluded.status,
         start_time = excluded.start_time,
         odds = excluded.odds,
@@ -106,13 +112,14 @@ class Betting {
       this.bookmaker,
       this.home_team,
       this.away_team,
+      JSON.stringify(this.bet ?? {}),
       this.status,
       this.start_time,
       JSON.stringify(this.odds ?? []),
       JSON.stringify(this.set1_odds ?? []),
       JSON.stringify(this.handicap ?? {}),
-      JSON.stringify(this.total_rounds ?? {}),
-      JSON.stringify(this.set1_game_count ?? {})
+      JSON.stringify(this.total_rounds ?? {}),  
+      JSON.stringify(this.set1_game_count ?? {}),
     );
   }
 
@@ -178,6 +185,7 @@ class Betting {
         bookmaker,
         home_team,
         away_team,
+        bet,
         status,
         start_time,
         odds,
@@ -186,12 +194,13 @@ class Betting {
         total_rounds,
         set1_game_count
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(match_id)
       DO UPDATE SET
         bookmaker = excluded.bookmaker,
         home_team = excluded.home_team,
         away_team = excluded.away_team,
+        bet = excluded.bet,
         status = excluded.status,
         start_time = excluded.start_time,
         odds = excluded.odds,
@@ -207,12 +216,13 @@ class Betting {
       matchInfo.bookmaker,
       matchInfo.competitor1Name,
       matchInfo.competitor2Name,
+      JSON.stringify(matchInfo.bet ?? {}),
       matchInfo.status,
       matchInfo.startTime instanceof Date
         ? matchInfo.startTime.toISOString()
         : matchInfo.startTime,
-      JSON.stringify(matchInfo.matchWinner ?? {}),
-      JSON.stringify(matchInfo.set1Winner ?? {}),
+      JSON.stringify(matchInfo.matchWinner ?? []),
+      JSON.stringify(matchInfo.set1Winner ?? []),
       JSON.stringify(matchInfo.handicapInfo ?? {}),
       JSON.stringify(matchInfo.totalBigRounds ?? {}),
       JSON.stringify(matchInfo.set1GameCount ?? {})

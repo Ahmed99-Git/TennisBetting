@@ -1,77 +1,58 @@
 const Betting = require('../models/Betting.js');
 const { americanOddsToDecimal } = require('../utils/common.js');
 
-const infoSample = {
-    "cutoffAt": "2026-02-21T15:00:00+00:00",
-    "isAlternate": false,
-    "key": "s;0;s;1.5",
-    "limits": [
-      {
-        "amount": 375,
-        "type": "maxRiskStake"
-      }
-    ],
-    "matchupId": 1624626491,
-    "period": 0,
-    "prices": [
-      {
-        "designation": "home",
-        "points": 1.5,
-        "price": -227
-      },
-      {
-        "designation": "away",
-        "points": -1.5,
-        "price": 183
-      }
-    ],
-    "status": "open",
-    "type": "spread",
-    "version": 3465391300
-  };
 function pushOdds(odds, infos) {
-    for(const info of infos){
-        odds.push({
-            designation: info.designation,
-            odds: americanOddsToDecimal(info.price).toFixed(3)
-        });
+    if (infos[0]?.designation == "home" || infos[0]?.designation == "over") {
+        odds.push(Number(americanOddsToDecimal(infos[0].price).toFixed(3)))
+        odds.push(Number(americanOddsToDecimal(infos[1].price).toFixed(3)))
+    } else {
+        odds.push(Number(americanOddsToDecimal(infos[1].price).toFixed(3)))
+        odds.push(Number(americanOddsToDecimal(infos[0].price).toFixed(3)))
     }
 }
 
 function getMatchWinner(infos) {
     const matchWinnerOdds =[];
     const matchWinnerInfo = infos.find(info => info.key == "s;0;m");
-    if(matchWinnerInfo == undefined || matchWinnerInfo == null) return null;
+    if (matchWinnerInfo == undefined || matchWinnerInfo == null) return null;
     pushOdds(matchWinnerOdds, matchWinnerInfo.prices);
     return matchWinnerOdds;
-}
+}   
 function getSet1Winner(infos) {
     const set1WinnerOdds =[];
     const set1WinnerInfo = infos.find(info => info.key == "s;1;m");
-    if(set1WinnerInfo == undefined || set1WinnerInfo == null) return null;
+    if (set1WinnerInfo == undefined || set1WinnerInfo == null) return null;
     pushOdds(set1WinnerOdds, set1WinnerInfo.prices);
     return set1WinnerOdds;
 }
 function getHandicapInfo(infos) {
     const handicapOdds = {};
     const handicapInfos = infos.filter(info => info.type == "spread");
-    if(handicapInfos.length == 0) return null;
+    if (handicapInfos.length == 0) return null;
 
-    for(const info of handicapInfos){
+    for (const info of handicapInfos) {
+        const tmpOdd = [];
+        const tmpJson = {};
         const handicapId = "handicap=" + info.key.split(";")[3];
-        handicapOdds[handicapId] = [];
-        pushOdds(handicapOdds[handicapId], info.prices);
+        pushOdds(tmpOdd, info.prices);
+        tmpJson.odds = tmpOdd;
+        handicapOdds[handicapId] = tmpJson;
     }
     return handicapOdds;
 }
 function getTotalBigRounds(infos) {
     const bigRoundInfo = {};
     const totalBigRoundsInfos = infos.filter(info => info.key?.startsWith("s;0;ou;") );  
-    if(totalBigRoundsInfos.length == 0) return null;
-    for(const info of totalBigRoundsInfos){
+    if (totalBigRoundsInfos.length == 0) return null;
+    for (const info of totalBigRoundsInfos) {
+        const tmpOdd = [];
+        const tmpJson = {};
         const bigRoundId = "total=" + info.key.split(";")[3];
         bigRoundInfo[bigRoundId] = [];
-        pushOdds(bigRoundInfo[bigRoundId], info.prices);
+        pushOdds(tmpOdd, info.prices);
+
+        tmpJson.odds = tmpOdd;
+        bigRoundInfo[bigRoundId] = tmpJson;
     }
     return bigRoundInfo;
 }

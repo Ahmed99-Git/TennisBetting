@@ -52,7 +52,7 @@ async function run (ws, count) {
     ws.fullMatchInfo = fullMatchInfo;
   // }
   const sortedData = await winamaxParser.resortAllData({standardInfo: ws.standardInfo, fullMatchInfo: ws.fullMatchInfo});
-  console.log("winamax betting data:", JSON.stringify(sortedData));
+  // console.log("winamax betting data:", JSON.stringify(sortedData));
   return ws;
 }
 
